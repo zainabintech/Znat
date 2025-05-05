@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Quiz for {{ quiz.course.title }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for question in questions %}
+            <div>
+                <p>{{ question.text }}</p>
+                {% if question.type == "multiple_choice" %}
+                    <input type="radio" name="question_{{ question.id }}" value="1"> Option 1<br>
+                    <input type="radio" name="question_{{ question.id }}" value="2"> Option 2<br>
+                    <input type="radio" name="question_{{ question.id }}" value="3"> Option 3<br>
+                {% else %}
+                    <input type="radio" name="question_{{ question.id }}" value="1"> True<br>
+                    <input type="radio" name="question_{{ question.id }}" value="0"> False<br>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}

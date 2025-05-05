@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="feature-card">
+        <div class="text-center mb-4">
+            <h2>Assessment Results</h2>
+            <p class="lead">{{ quiz.course.title }}</p>
+        </div>
+
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-4">
+                <div class="feature-card h-100 {% if passed %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10">
+                    <div class="text-center">
+                        <h3 class="display-4 mb-0">{{ score|floatformat:1 }}%</h3>
+                        <p class="text-muted">Your Score</p>
+                        {% if passed %}
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle me-2"></i>Congratulations! You've passed!
+                            </div>
+                        {% else %}
+                            <div class="alert alert-danger">
+                                <i class="fas fa-times-circle me-2"></i>You need {{ quiz.passing_score }}% to pass
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if feedback %}
+        <div class="mt-4">
+            <h3>Question Feedback</h3>
+            {% for item in feedback %}
+            <div class="question-feedback mb-3">
+                <div class="feature-card {% if item.is_correct %}border-success{% else %}border-danger{% endif %}">
+                    <h5>Question {{ forloop.counter }}</h5>
+                    <p>{{ item.text }}</p>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Your Answer:</strong></p>
+                            <div class="answer-box {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 p-2 rounded">
+                                Option {{ item.user_answer }}
+                            </div>
+                        </div>
+                        {% if not item.is_correct %}
+                        <div class="col-md-6">
+                            <p class="mb-1"><strong>Correct Answer:</strong></p>
+                            <div class="answer-box bg-success bg-opacity-10 p-2 rounded">
+                                Option {{ item.correct_answer }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="text-center mt-4">
+            {% if passed %}
+                {% if user.current_level < 3 %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-level-up-alt me-2"></i>You've been promoted to Level {{ user.current_level }}!
+                    </div>
+                {% endif %}
+                <a href="{% url 'course_list' %}" class="btn btn-cyber">Continue Learning</a>
+            {% else %}
+                <a href="{% url 'quiz_take' quiz.pk %}" class="btn btn-cyber">Retake Assessment</a>
+            {% endif %}
+            <a href="{% url 'employee_dashboard' %}" class="btn btn-outline-secondary ms-2">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

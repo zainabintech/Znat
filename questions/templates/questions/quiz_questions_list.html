@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Questions for {{ quiz.course.title }} Quiz</h2>
+    
+    {% if user.role == 'admin' %}
+    <div class="mb-4">
+        <a href="{% url 'question_create' quiz.id %}" class="btn btn-cyber">Add New Question</a>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        {% for question in questions %}
+        <div class="col-md-6 mb-4">
+            <div class="feature-card">
+                <h4>Question {{ forloop.counter }}</h4>
+                <p>{{ question.text }}</p>
+                <a href="{% url 'quiz_question_detail' quiz.id question.id %}" class="btn btn-cyber btn-sm">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col">
+            <p>No questions available for this quiz yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

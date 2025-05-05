@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="feature-card">
+        <h2>{% if question %}Edit{% else %}Add{% endif %} Question</h2>
+        <p class="text-muted mb-4">{{ quiz.course.title }}</p>
+
+        <form method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="text" class="form-label">Question Text</label>
+                <textarea class="form-control" id="text" name="text" rows="3" required>{{ question.text|default:'' }}</textarea>
+                <div class="invalid-feedback">
+                    Please provide the question text.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="type" class="form-label">Question Type</label>
+                <select class="form-select" id="type" name="type" required onchange="toggleOptions(this.value)">
+                    <option value="multiple_choice" {% if question.type == 'multiple_choice' %}selected{% endif %}>Multiple Choice</option>
+                    <option value="true_false" {% if question.type == 'true_false' %}selected{% endif %}>True/False</option>
+                </select>
+            </div>
+
+            <div id="multipleChoiceOptions">
+                <div class="mb-3">
+                    <label class="form-label">Options</label>
+                    <div class="option-group">
+                        <input type="text" class="form-control mb-2" name="option_a" placeholder="Option A" required>
+                        <input type="text" class="form-control mb-2" name="option_b" placeholder="Option B" required>
+                        <input type="text" class="form-control mb-2" name="option_c" placeholder="Option C" required>
+                        <input type="text" class="form-control mb-2" name="option_d" placeholder="Option D" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Correct Answer</label>
+                    <select class="form-select" name="correct_option" required>
+                        <option value="A">Option A</option>
+                        <option value="B">Option B</option>
+                        <option value="C">Option C</option>
+                        <option value="D">Option D</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="trueFalseOptions" style="display: none;">
+                <div class="mb-3">
+                    <label class="form-label">Correct Answer</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="correct_option_tf" value="true" id="tfTrue">
+                        <label class="form-check-label" for="tfTrue">True</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="correct_option_tf" value="false" id="tfFalse">
+                        <label class="form-check-label" for="tfFalse">False</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-cyber">Save Question</button>
+                <a href="{% url 'quiz_questions_list' quiz.id %}" class="btn btn-outline-secondary ms-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleOptions(questionType) {
+    const multipleChoice = document.getElementById('multipleChoiceOptions');
+    const trueFalse = document.getElementById('trueFalseOptions');
+    
+    if (questionType === 'multiple_choice') {
+        multipleChoice.style.display = 'block';
+        trueFalse.style.display = 'none';
+    } else {
+        multipleChoice.style.display = 'none';
+        trueFalse.style.display = 'block';
+    }
+}
+
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %}

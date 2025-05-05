@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="landing-page">
+    <h1>Welcome to ZNAT Security</h1>
+    <p>ZNAT Security is your trusted platform for phishing awareness and training. Learn how to identify and prevent phishing attacks with our interactive courses and quizzes.</p>
+    <div class="features">
+        <h2>Features</h2>
+        <ul>
+            <li>Comprehensive phishing awareness courses</li>
+            <li>Interactive quizzes to test your knowledge</li>
+            <li>Admin dashboard for managing users and content</li>
+            <li>Employee dashboard for tracking progress</li>
+        </ul>
+    </div>
+    <div class="cta-buttons">
+        <a href="{% url 'signup' %}" class="button">Sign Up</a>
+        <a href="{% url 'login' %}" class="button">Log In</a>
+    </div>
+</section>
+{% endblock %}

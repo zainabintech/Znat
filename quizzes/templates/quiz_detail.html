@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Quiz for {{ quiz.course.title }}</h2>
+    <p>Passing Score: {{ quiz.passing_score }}%</p>
+    <h3>Questions</h3>
+    <a href="{% url 'question_create' quiz.pk %}">Add Question</a>
+    <ul>
+        {% for question in questions %}
+            <li>{{ question.text }} (Type: {{ question.type }})</li>
+        {% empty %}
+            <li>No questions yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

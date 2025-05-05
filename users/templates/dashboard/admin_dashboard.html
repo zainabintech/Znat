@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+        <div class="btn-group">
+            <a href="{% url 'course_create' %}" class="btn btn-cyber">
+                <i class="fas fa-plus me-1"></i>New Course
+            </a>
+            <a href="{% url 'quiz_create' %}" class="btn btn-cyber">
+                <i class="fas fa-plus me-1"></i>New Quiz
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="feature-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="h5 mb-0">{{ total_employees }}</h3>
+                        <p class="text-muted mb-0">Total Employees</p>
+                    </div>
+                    <i class="fas fa-users fa-2x text-primary"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="h5 mb-0">{{ total_courses }}</h3>
+                        <p class="text-muted mb-0">Active Courses</p>
+                    </div>
+                    <i class="fas fa-book fa-2x text-success"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="h5 mb-0">{{ total_quizzes }}</h3>
+                        <p class="text-muted mb-0">Total Quizzes</p>
+                    </div>
+                    <i class="fas fa-tasks fa-2x text-warning"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="feature-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="h5 mb-0">{{ completion_rate|floatformat:1 }}%</h3>
+                        <p class="text-muted mb-0">Completion Rate</p>
+                    </div>
+                    <i class="fas fa-chart-line fa-2x text-info"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="row">
+        <!-- Employee Progress -->
+        <div class="col-md-8 mb-4">
+            <div class="feature-card h-100">
+                <h3 class="h4 mb-3">Employee Progress</h3>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Current Level</th>
+                                <th>Latest Score</th>
+                                <th>Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for employee in employees %}
+                            <tr>
+                                <td>{{ employee.username }}</td>
+                                <td>Level {{ employee.current_level }}</td>
+                                <td>
+                                    {% if employee.latest_score %}
+                                        {{ employee.latest_score }}%
+                                    {% else %}
+                                        N/A
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="progress" style="height: 10px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ employee.completion_percentage|default:0 }}%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">No employees registered yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Courses -->
+        <div class="col-md-4 mb-4">
+            <div class="feature-card h-100">
+                <h3 class="h4 mb-3">Recent Courses</h3>
+                <div class="list-group list-group-flush">
+                    {% for course in courses|slice:":5" %}
+                    <div class="list-group-item bg-transparent border-0 px-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0">{{ course.title }}</h6>
+                                <small class="text-muted">Level {{ course.level }}</small>
+                            </div>
+                            <a href="{% url 'course_detail' course.pk %}" class="btn btn-sm btn-cyber">View</a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted">
+                        No courses available yet.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Analytics -->
+    <div class="row">
+        <div class="col-12">
+            <div class="feature-card">
+                <h3 class="h4 mb-3">Course Analytics</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Course Completion by Level</h5>
+                        <div class="chart-container" style="position: relative; height:200px;">
+                            <canvas id="courseCompletionChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Average Quiz Scores</h5>
+                        <div class="chart-container" style="position: relative; height:200px;">
+                            <canvas id="quizScoresChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Course Completion Chart
+const completionCtx = document.getElementById('courseCompletionChart').getContext('2d');
+new Chart(completionCtx, {
+    type: 'bar',
+    data: {
+        labels: ['Level 1', 'Level 2', 'Level 3'],
+        datasets: [{
+            label: 'Completion Rate',
+            data: {{ completion_by_level|safe }},
+            backgroundColor: 'rgba(138, 43, 226, 0.6)',
+            borderColor: 'rgba(138, 43, 226, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                }
+            }
+        }
+    }
+});
+
+// Quiz Scores Chart
+const scoresCtx = document.getElementById('quizScoresChart').getContext('2d');
+new Chart(scoresCtx, {
+    type: 'line',
+    data: {
+        labels: {{ quiz_labels|safe }},
+        datasets: [{
+            label: 'Average Score',
+            data: {{ quiz_scores|safe }},
+            fill: false,
+            borderColor: 'rgba(138, 43, 226, 1)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

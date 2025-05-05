@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Login</h2>
+    {% if messages %}
+        <div class="alert alert-danger">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required class="form-control mb-2"><br>
+        <input type="password" name="password" placeholder="Password" required class="form-control mb-2"><br>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+{% endblock %}
