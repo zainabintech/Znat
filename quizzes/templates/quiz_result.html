@@ -4,50 +4,67 @@
 <div class="container mt-4">
     <div class="feature-card">
         <div class="text-center mb-4">
-            <h2>Assessment Results</h2>
-            <p class="lead">{{ quiz.course.title }}</p>
-        </div>
-
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-4">
-                <div class="feature-card h-100 {% if passed %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10">
-                    <div class="text-center">
-                        <h3 class="display-4 mb-0">{{ score|floatformat:1 }}%</h3>
-                        <p class="text-muted">Your Score</p>
-                        {% if passed %}
-                            <div class="alert alert-success">
-                                <i class="fas fa-check-circle me-2"></i>Congratulations! You've passed!
-                            </div>
-                        {% else %}
-                            <div class="alert alert-danger">
-                                <i class="fas fa-times-circle me-2"></i>You need {{ quiz.passing_score }}% to pass
-                            </div>
-                        {% endif %}
-                    </div>
+            <h2><i class="fas fa-clipboard-check me-2"></i>Assessment Results</h2>
+            <p class="lead text-muted">{{ quiz.course.title }}</p>
+            
+            {% if passed %}
+                <div class="result-circle success mb-4">
+                    <div class="score">{{ score|floatformat:1 }}%</div>
+                    <div class="status">PASSED</div>
                 </div>
-            </div>
+                <div class="alert alert-success">
+                    <i class="fas fa-trophy me-2"></i>Congratulations! You've successfully completed this assessment.
+                </div>
+                {% if level_up %}
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-level-up-alt me-2"></i>
+                        You've been promoted to Level {{ new_level }}! New courses are now available.
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="result-circle failed mb-4">
+                    <div class="score">{{ score|floatformat:1 }}%</div>
+                    <div class="status">NOT PASSED</div>
+                </div>
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    You need {{ quiz.passing_score }}% to pass this assessment. Keep learning and try again!
+                </div>
+            {% endif %}
         </div>
 
         {% if feedback %}
-        <div class="mt-4">
-            <h3>Question Feedback</h3>
+        <div class="feedback-section mt-4">
+            <h3 class="h4 mb-3">Question Review</h3>
             {% for item in feedback %}
-            <div class="question-feedback mb-3">
+            <div class="feedback-item mb-3">
                 <div class="feature-card {% if item.is_correct %}border-success{% else %}border-danger{% endif %}">
-                    <h5>Question {{ forloop.counter }}</h5>
-                    <p>{{ item.text }}</p>
+                    <div class="question-header d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="mb-0">Question {{ forloop.counter }}</h5>
+                        {% if item.is_correct %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>Correct
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger">
+                                <i class="fas fa-times me-1"></i>Incorrect
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <p class="mb-3">{{ item.question }}</p>
                     
                     <div class="row">
                         <div class="col-md-6">
-                            <p class="mb-1"><strong>Your Answer:</strong></p>
-                            <div class="answer-box {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 p-2 rounded">
-                                Option {{ item.user_answer }}
+                            <p class="mb-2"><strong>Your Answer:</strong></p>
+                            <div class="answer-box {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %} bg-opacity-10 p-3 rounded">
+                                Option {{ item.your_answer }}
                             </div>
                         </div>
                         {% if not item.is_correct %}
                         <div class="col-md-6">
-                            <p class="mb-1"><strong>Correct Answer:</strong></p>
-                            <div class="answer-box bg-success bg-opacity-10 p-2 rounded">
+                            <p class="mb-2"><strong>Correct Answer:</strong></p>
+                            <div class="answer-box bg-success bg-opacity-10 p-3 rounded">
                                 Option {{ item.correct_answer }}
                             </div>
                         </div>
@@ -59,19 +76,94 @@
         </div>
         {% endif %}
 
-        <div class="text-center mt-4">
+        <div class="text-center mt-4 pt-4 border-top">
             {% if passed %}
-                {% if user.current_level < 3 %}
-                    <div class="alert alert-info">
-                        <i class="fas fa-level-up-alt me-2"></i>You've been promoted to Level {{ user.current_level }}!
-                    </div>
-                {% endif %}
-                <a href="{% url 'course_list' %}" class="btn btn-cyber">Continue Learning</a>
+                <p class="mb-3">Ready to continue your learning journey?</p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'course_list' %}" class="btn btn-cyber">
+                        <i class="fas fa-graduation-cap me-1"></i>Continue Learning
+                    </a>
+                    <a href="{% url 'employee_dashboard' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-home me-1"></i>Back to Dashboard
+                    </a>
+                </div>
             {% else %}
-                <a href="{% url 'quiz_take' quiz.pk %}" class="btn btn-cyber">Retake Assessment</a>
+                <p class="mb-3">Don't worry! You can review the course material and try again.</p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'course_detail' quiz.course.id %}" class="btn btn-cyber">
+                        <i class="fas fa-book me-1"></i>Review Course
+                    </a>
+                    <a href="{% url 'quiz_take' quiz.id %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-redo me-1"></i>Retake Assessment
+                    </a>
+                </div>
             {% endif %}
-            <a href="{% url 'employee_dashboard' %}" class="btn btn-outline-secondary ms-2">Back to Dashboard</a>
         </div>
     </div>
 </div>
+
+<style>
+.result-circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border: 4px solid;
+    animation: glow 2s infinite;
+}
+
+.result-circle.success {
+    border-color: var(--bs-success);
+    background: rgba(25, 135, 84, 0.1);
+    --glow-color: 25, 135, 84;
+}
+
+.result-circle.failed {
+    border-color: var(--bs-warning);
+    background: rgba(255, 193, 7, 0.1);
+    --glow-color: 255, 193, 7;
+}
+
+.result-circle .score {
+    font-size: 3rem;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.result-circle .status {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.feedback-item {
+    transition: all 0.3s ease;
+}
+
+.feedback-item:hover {
+    transform: translateY(-2px);
+}
+
+.answer-box {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+@keyframes glow {
+    0% {
+        box-shadow: 0 0 10px rgba(var(--glow-color), 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(var(--glow-color), 0.7);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(var(--glow-color), 0.5);
+    }
+}
+</style>
 {% endblock %}

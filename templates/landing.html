@@ -3,20 +3,55 @@
 {% block content %}
 <!-- Hero Section -->
 <section class="hero-section">
-    <div class="hero-pattern"></div>
+    <div class="hero-overlay"></div>
     <div class="container">
-        <div class="row align-items-center">
+        <div class="row align-items-center min-vh-75">
             <div class="col-lg-6" data-aos="fade-right">
-                <h1 class="display-4 fw-bold mb-4">Secure Your Organization's Future</h1>
-                <p class="lead mb-4">ZNAT empowers your workforce with cutting-edge cybersecurity awareness training. Stay ahead of cyber threats with our interactive learning platform.</p>
+                <h1 class="display-4 fw-bold text-gradient mb-4">Secure Your Future with ZNAT Security</h1>
+                <p class="lead mb-4 text-light">Empower your organization with cutting-edge cybersecurity awareness training. Stay ahead of cyber threats with our interactive learning platform.</p>
                 <div class="d-flex gap-3">
-                    <a href="{% url 'signup' %}" class="btn btn-cyber">Start Protection</a>
-                    <a href="#features" class="btn btn-outline-light">Explore Features</a>
+                    <a href="{% url 'signup' %}" class="btn btn-cyber btn-lg">
+                        <i class="fas fa-shield-alt me-2"></i>Get Started Free
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
                 </div>
             </div>
             <div class="col-lg-6" data-aos="fade-left">
-                <div class="position-relative">
-                    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: radial-gradient(circle, var(--neon-purple) 0%, transparent 70%); opacity: 0.3; filter: blur(40px);"></div>
+                <div class="cyber-graphics">
+                    <div class="cyber-shield">
+                        <i class="fas fa-shield-alt fa-6x text-neon"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section py-5">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="stat-card">
+                    <i class="fas fa-users-shield fa-3x mb-3 text-neon"></i>
+                    <div class="stat-number" data-target="10000">0</div>
+                    <p class="text-muted mb-0">Trained Employees</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-card">
+                    <i class="fas fa-graduation-cap fa-3x mb-3 text-neon"></i>
+                    <div class="stat-number" data-target="50">0</div>
+                    <p class="text-muted mb-0">Interactive Courses</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-card">
+                    <i class="fas fa-shield-virus fa-3x mb-3 text-neon"></i>
+                    <div class="stat-number" data-target="95">0</div>
+                    <p class="text-muted mb-0">Success Rate</p>
                 </div>
             </div>
         </div>
@@ -26,98 +61,78 @@
 <!-- Features Section -->
 <section id="features" class="py-5">
     <div class="container">
-        <h2 class="text-center mb-5" data-aos="fade-up">Comprehensive Security Training</h2>
+        <h2 class="text-center h1 mb-5" data-aos="fade-up">Why Choose ZNAT Security?</h2>
         <div class="row g-4">
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-virus"></i>
-                    </div>
-                    <h3>Threat Detection</h3>
-                    <p>Learn to identify and prevent various cyber threats including phishing, malware, and social engineering attacks.</p>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                <div class="feature-card">
-                    <div class="feature-icon">
+            <div class="col-md-4" data-aos="fade-up">
+                <div class="feature-card h-100">
+                    <div class="feature-icon mb-4">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <h3>Interactive Learning</h3>
-                    <p>Engage with real-world scenarios and practical exercises designed to enhance security awareness.</p>
+                    <p>Engage with real-world scenarios and hands-on exercises designed to enhance cybersecurity awareness.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check me-2"></i>Practical scenarios</li>
+                        <li><i class="fas fa-check me-2"></i>Video tutorials</li>
+                        <li><i class="fas fa-check me-2"></i>Interactive quizzes</li>
+                    </ul>
                 </div>
             </div>
-            <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                <div class="feature-card">
-                    <div class="feature-icon">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card h-100">
+                    <div class="feature-icon mb-4">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3>Comprehensive Protection</h3>
+                    <p>Learn to identify and prevent various cyber threats including phishing, malware, and social engineering attacks.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check me-2"></i>Phishing prevention</li>
+                        <li><i class="fas fa-check me-2"></i>Social engineering</li>
+                        <li><i class="fas fa-check me-2"></i>Data protection</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card h-100">
+                    <div class="feature-icon mb-4">
                         <i class="fas fa-chart-line"></i>
                     </div>
                     <h3>Progress Tracking</h3>
                     <p>Monitor employee progress and security awareness levels with detailed analytics and reporting.</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check me-2"></i>Detailed analytics</li>
+                        <li><i class="fas fa-check me-2"></i>Progress reports</li>
+                        <li><i class="fas fa-check me-2"></i>Performance metrics</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Stats Section with Animation -->
-<section class="stats-section">
+<!-- How It Works -->
+<section class="how-it-works py-5 bg-gradient">
     <div class="container">
-        <div class="row">
-            <div class="col-md-4" data-aos="zoom-in">
-                <div class="stat-card">
-                    <div class="stat-number" id="companiesCount">0</div>
-                    <p>Protected Organizations</p>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="100">
-                <div class="stat-card">
-                    <div class="stat-number" id="employeesCount">0</div>
-                    <p>Trained Employees</p>
-                </div>
-            </div>
-            <div class="col-md-4" data-aos="zoom-in" data-aos-delay="200">
-                <div class="stat-card">
-                    <div class="stat-number" id="threatsCount">0</div>
-                    <p>Threats Prevented</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- How It Works Section -->
-<section class="py-5">
-    <div class="container">
-        <h2 class="text-center mb-5" data-aos="fade-up">Security Journey</h2>
+        <h2 class="text-center h1 mb-5" data-aos="fade-up">How It Works</h2>
         <div class="row g-4">
-            <div class="col-md-4" data-aos="fade-right">
-                <div class="step-card">
-                    <div class="step-number">01</div>
-                    <div class="mb-4">
-                        <i class="fas fa-user-shield fa-3x text-primary"></i>
-                    </div>
-                    <h4>Register Your Organization</h4>
-                    <p>Set up your organization's security training hub</p>
-                </div>
-            </div>
             <div class="col-md-4" data-aos="fade-up">
                 <div class="step-card">
-                    <div class="step-number">02</div>
-                    <div class="mb-4">
-                        <i class="fas fa-users-cog fa-3x text-primary"></i>
-                    </div>
-                    <h4>Enroll Employees</h4>
-                    <p>Add team members to the training program</p>
+                    <div class="step-number">01</div>
+                    <h4>Sign Up</h4>
+                    <p>Create your organization's account and set up your security training hub.</p>
                 </div>
             </div>
-            <div class="col-md-4" data-aos="fade-left">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <h4>Learn</h4>
+                    <p>Access our comprehensive course library and start your cybersecurity journey.</p>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
                 <div class="step-card">
                     <div class="step-number">03</div>
-                    <div class="mb-4">
-                        <i class="fas fa-tasks fa-3x text-primary"></i>
-                    </div>
-                    <h4>Track Progress</h4>
-                    <p>Monitor security awareness improvement</p>
+                    <h4>Practice</h4>
+                    <p>Test your knowledge with interactive quizzes and real-world scenarios.</p>
                 </div>
             </div>
         </div>
@@ -125,53 +140,318 @@
 </section>
 
 <!-- CTA Section -->
-<section class="cta-section">
+<section class="cta-section py-5">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-8 text-center">
-                <h2 class="display-5 mb-4" data-aos="fade-up">Strengthen Your Security Today</h2>
-                <p class="lead mb-4" data-aos="fade-up" data-aos-delay="100">Join organizations worldwide in creating a cyber-secure workforce.</p>
-                <a href="{% url 'signup' %}" class="btn btn-cyber" data-aos="fade-up" data-aos-delay="200">Start Free Trial</a>
+                <h2 class="display-5 mb-4" data-aos="fade-up">Ready to Strengthen Your Security?</h2>
+                <p class="lead mb-4" data-aos="fade-up">Join organizations worldwide in creating a cyber-secure workforce.</p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{% url 'signup' %}" class="btn btn-cyber btn-lg" data-aos="fade-up">
+                        <i class="fas fa-shield-alt me-2"></i>Start Free Trial
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-outline-light btn-lg" data-aos="fade-up">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Add JavaScript for number animation -->
+<!-- Footer -->
+<footer class="footer py-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="footer-brand mb-4">
+                    <i class="fas fa-shield-alt fa-2x me-2 text-neon"></i>
+                    <h3 class="d-inline-block mb-0">ZNAT Security</h3>
+                </div>
+                <p class="text-muted">Empowering organizations with cutting-edge cybersecurity awareness training.</p>
+                <div class="social-links">
+                    <a href="#" class="me-3"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="{% url 'course_list' %}">Courses</a></li>
+                    <li><a href="{% url 'signup' %}">Get Started</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-2 col-md-4">
+                <h5>Resources</h5>
+                <ul class="list-unstyled footer-links">
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Support</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4 col-md-4">
+                <h5>Stay Updated</h5>
+                <p class="text-muted">Subscribe to our newsletter for the latest security tips and updates.</p>
+                <form class="newsletter-form">
+                    <div class="input-group">
+                        <input type="email" class="form-control" placeholder="Enter your email">
+                        <button class="btn btn-cyber" type="submit">Subscribe</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr class="my-4">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="mb-0 text-muted">&copy; 2025 ZNAT Security. All rights reserved.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <ul class="list-inline mb-0">
+                    <li class="list-inline-item"><a href="#">Privacy Policy</a></li>
+                    <li class="list-inline-item"><a href="#">Terms of Service</a></li>
+                    <li class="list-inline-item"><a href="#">Cookie Policy</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Custom Styles -->
+<style>
+.hero-section {
+    position: relative;
+    padding: 120px 0;
+    background: linear-gradient(135deg, var(--dark-bg), var(--darker-bg));
+    overflow: hidden;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238A2BE2' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.cyber-graphics {
+    position: relative;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cyber-shield {
+    position: relative;
+    animation: float 3s ease-in-out infinite;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #fff 0%, var(--neon-purple) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+}
+
+.text-neon {
+    color: var(--neon-purple);
+    text-shadow: 0 0 10px var(--neon-purple);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-purple), var(--secondary-purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: white;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+}
+
+.feature-list li {
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.step-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--neon-purple);
+    opacity: 0.3;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+}
+
+.step-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.step-card:hover {
+    border-color: var(--neon-purple);
+    transform: translateY(-5px);
+}
+
+.bg-gradient {
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(147, 112, 219, 0.1));
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Stat Counter Animation */
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--neon-purple);
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+    
+    .cyber-graphics {
+        height: 200px;
+        margin-top: 2rem;
+    }
+    
+    .feature-card {
+        margin-bottom: 2rem;
+    }
+}
+
+.footer {
+    background: var(--darker-bg);
+    border-top: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+.footer h5 {
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.footer-links li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--neon-purple);
+    padding-left: 5px;
+}
+
+.social-links a {
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    color: var(--neon-purple);
+    transform: translateY(-3px);
+}
+
+.newsletter-form .form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    color: var(--text-primary);
+}
+
+.newsletter-form .form-control:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--neon-purple);
+    box-shadow: none;
+}
+
+.footer hr {
+    border-color: rgba(138, 43, 226, 0.2);
+}
+
+.list-inline-item:not(:last-child) {
+    margin-right: 1.5rem;
+}
+
+.list-inline-item a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.list-inline-item a:hover {
+    color: var(--neon-purple);
+}
+</style>
+
+<!-- Animation Script -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    function animateValue(id, start, end, duration) {
-        const obj = document.getElementById(id);
-        if (!obj) return;
+    // Stat Counter Animation
+    const stats = document.querySelectorAll('.stat-number');
+    stats.forEach(stat => {
+        const target = parseInt(stat.getAttribute('data-target'));
+        const duration = 2000;
+        const step = target / (duration / 16);
+        let current = 0;
         
-        let startTimestamp = null;
-        const step = (timestamp) => {
-            if (!startTimestamp) startTimestamp = timestamp;
-            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            obj.innerHTML = Math.floor(progress * (end - start) + start) + '+';
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
+        const updateCounter = () => {
+            current += step;
+            if (current < target) {
+                stat.textContent = Math.floor(current);
+                requestAnimationFrame(updateCounter);
+            } else {
+                stat.textContent = target;
             }
         };
-        window.requestAnimationFrame(step);
-    }
-
-    // Intersection Observer for stats animation
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateValue('companiesCount', 0, 500, 2000);
-                animateValue('employeesCount', 0, 10000, 2000);
-                animateValue('threatsCount', 0, 50000, 2000);
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.5 });
-
-    const statsSection = document.querySelector('.stats-section');
-    if (statsSection) {
-        observer.observe(statsSection);
-    }
+        
+        // Start animation when element is in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    updateCounter();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        observer.observe(stat);
+    });
 });
 </script>
 {% endblock %}

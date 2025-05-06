@@ -1,21 +1,160 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h2>Quiz for {{ quiz.course.title }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        {% for question in questions %}
-            <div>
-                <p>{{ question.text }}</p>
-                {% if question.type == "multiple_choice" %}
-                    <input type="radio" name="question_{{ question.id }}" value="1"> Option 1<br>
-                    <input type="radio" name="question_{{ question.id }}" value="2"> Option 2<br>
-                    <input type="radio" name="question_{{ question.id }}" value="3"> Option 3<br>
-                {% else %}
-                    <input type="radio" name="question_{{ question.id }}" value="1"> True<br>
-                    <input type="radio" name="question_{{ question.id }}" value="0"> False<br>
-                {% endif %}
+<div class="container mt-4">
+    <div class="feature-card">
+        <div class="text-center mb-4">
+            <h2><i class="fas fa-tasks me-2"></i>{{ quiz.course.title }} Assessment</h2>
+            <p class="text-muted">Complete all questions carefully. Required passing score: {{ quiz.passing_score }}%</p>
+        </div>
+
+        <form method="post" id="quizForm" class="needs-validation" novalidate>
+            {% csrf_token %}
+            {% for question in questions %}
+            <div class="question-card mb-4">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="question-number me-3">{{ forloop.counter }}</span>
+                    <h5 class="mb-0">{{ question.text }}</h5>
+                </div>
+
+                <div class="options ms-5">
+                    <div class="form-check custom-option mb-3">
+                        <input class="form-check-input" type="radio" 
+                               name="question_{{ question.id }}" 
+                               id="q{{ question.id }}_1"
+                               value="1" required>
+                        <label class="form-check-label" for="q{{ question.id }}_1">
+                            {{ question.option_a }}
+                        </label>
+                    </div>
+                    <div class="form-check custom-option mb-3">
+                        <input class="form-check-input" type="radio" 
+                               name="question_{{ question.id }}" 
+                               id="q{{ question.id }}_2"
+                               value="2">
+                        <label class="form-check-label" for="q{{ question.id }}_2">
+                            {{ question.option_b }}
+                        </label>
+                    </div>
+                    <div class="form-check custom-option mb-3">
+                        <input class="form-check-input" type="radio" 
+                               name="question_{{ question.id }}" 
+                               id="q{{ question.id }}_3"
+                               value="3">
+                        <label class="form-check-label" for="q{{ question.id }}_3">
+                            {{ question.option_c }}
+                        </label>
+                    </div>
+                    <div class="form-check custom-option mb-3">
+                        <input class="form-check-input" type="radio" 
+                               name="question_{{ question.id }}" 
+                               id="q{{ question.id }}_4"
+                               value="4">
+                        <label class="form-check-label" for="q{{ question.id }}_4">
+                            {{ question.option_d }}
+                        </label>
+                    </div>
+                </div>
             </div>
-        {% endfor %}
-        <button type="submit">Submit</button>
-    </form>
+            {% endfor %}
+
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a href="{% url 'course_detail' quiz.course.id %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Course
+                </a>
+                <button type="submit" class="btn btn-cyber" onclick="return confirmSubmission()">
+                    <i class="fas fa-paper-plane me-1"></i>Submit Assessment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.question-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    transition: all 0.3s ease;
+}
+
+.question-card:hover {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.1);
+}
+
+.question-number {
+    background: var(--primary-purple);
+    color: white;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+.custom-option {
+    padding: 1rem;
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.custom-option:hover {
+    background: rgba(138, 43, 226, 0.05);
+    border-color: var(--neon-purple);
+}
+
+.form-check-input:checked ~ .form-check-label {
+    color: var(--neon-purple);
+    font-weight: 500;
+}
+
+.question-card.border-danger {
+    border-color: var(--bs-danger);
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    75% { transform: translateX(10px); }
+}
+</style>
+
+<script>
+function confirmSubmission() {
+    // Check if all questions are answered
+    const form = document.getElementById('quizForm');
+    const questions = form.querySelectorAll('.question-card');
+    let allAnswered = true;
+    
+    questions.forEach((question) => {
+        const answered = question.querySelector('input:checked');
+        if (!answered) {
+            allAnswered = false;
+            question.classList.add('border-danger');
+            question.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            question.classList.remove('border-danger');
+        }
+    });
+    
+    if (!allAnswered) {
+        alert('Please answer all questions before submitting.');
+        return false;
+    }
+    
+    return confirm('Are you sure you want to submit your answers? You cannot change them after submission.');
+}
+
+// Remove error styling when an option is selected
+document.querySelectorAll('.form-check-input').forEach(input => {
+    input.addEventListener('change', function() {
+        this.closest('.question-card').classList.remove('border-danger');
+    });
+});
+</script>
 {% endblock %}

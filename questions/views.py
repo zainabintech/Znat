@@ -3,12 +3,20 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
+from django.db import transaction
 from .models import Course, Video, PDF, QuizQuestion, EmployeeProgress, Quiz, Question
 from .forms import VideoForm, PDFForm, QuizQuestionForm
 import os
+import magic
 
 def is_admin(user):
     return user.is_authenticated and user.role == 'Admin'
+
+def validate_file_type(file, content_type_prefix):
+    mime = magic.from_buffer(file.read(1024), mime=True)
+    file.seek(0)  # Reset file pointer
+    if not mime.startswith(content_type_prefix):
+        raise ValidationError(f'Invalid file type. Expected {content_type_prefix}, got {mime}')
 
 @login_required
 @user_passes_test(is_admin)
@@ -32,63 +40,65 @@ def upload_course_material(request):
         course_id = request.POST.get('course')
         
         try:
-            course = Course.objects.get(pk=course_id)
-            
-            if material_type == 'video':
-                if 'video_file' not in request.FILES:
-                    raise ValidationError('No video file uploaded')
+            with transaction.atomic():
+                course = Course.objects.get(pk=course_id)
+                
+                if material_type == 'video':
+                    if 'video_file' not in request.FILES:
+                        raise ValidationError('No video file uploaded')
+                        
+                    video_file = request.FILES['video_file']
+                    validate_file_type(video_file, 'video/')
                     
-                video_file = request.FILES['video_file']
-                if not video_file.content_type.startswith('video/'):
-                    raise ValidationError('Invalid video format')
-                
-                # Check file size (100MB limit)
-                if video_file.size > 104857600:  # 100MB in bytes
-                    raise ValidationError('Video file too large (max 100MB)')
-                
-                video = Video.objects.create(
-                    title=title,
-                    course=course,
-                    video_file=video_file
-                )
-                messages.success(request, 'Video uploaded successfully')
-                
-            elif material_type == 'pdf':
-                if 'pdf_file' not in request.FILES:
-                    raise ValidationError('No PDF file uploaded')
+                    # Check file size (100MB limit)
+                    if video_file.size > 104857600:
+                        raise ValidationError('Video file too large (max 100MB)')
                     
-                pdf_file = request.FILES['pdf_file']
-                if not pdf_file.content_type == 'application/pdf':
-                    raise ValidationError('Invalid file format. Please upload a PDF')
-                
-                # Check file size (10MB limit)
-                if pdf_file.size > 10485760:  # 10MB in bytes
-                    raise ValidationError('PDF file too large (max 10MB)')
-                
-                pdf = PDF.objects.create(
-                    title=title,
-                    course=course,
-                    pdf_file=pdf_file
-                )
-                messages.success(request, 'PDF uploaded successfully')
-            
-            elif request.POST.get('action') == 'delete_video':
-                video_id = request.POST.get('id')
-                video = get_object_or_404(Video, id=video_id)
-                # Delete the file from storage
-                if video.video_file:
-                    default_storage.delete(video.video_file.path)
-                video.delete()
-                messages.success(request, 'Video deleted successfully')
-                
-            elif request.POST.get('action') == 'delete_pdf':
-                pdf_id = request.POST.get('id')
-                pdf = get_object_or_404(PDF, id=pdf_id)
-                # Delete the file from storage
-                if pdf.pdf_file:
-                    default_storage.delete(pdf.pdf_file.path)
-                pdf.delete()
-                messages.success(request, 'PDF deleted successfully')
+                    video = Video.objects.create(
+                        title=title,
+                        course=course,
+                        video_file=video_file
+                    )
+                    messages.success(request, 'Video uploaded successfully')
+                    
+                elif material_type == 'pdf':
+                    if 'pdf_file' not in request.FILES:
+                        raise ValidationError('No PDF file uploaded')
+                        
+                    pdf_file = request.FILES['pdf_file']
+                    validate_file_type(pdf_file, 'application/pdf')
+                    
+                    # Check file size (10MB limit)
+                    if pdf_file.size > 10485760:
+                        raise ValidationError('PDF file too large (max 10MB)')
+                    
+                    pdf = PDF.objects.create(
+                        title=title,
+                        course=course,
+                        pdf_file=pdf_file
+                    )
+                    messages.success(request, 'PDF uploaded successfully')
+                    
+                elif request.POST.get('action') == 'delete_video':
+                    video_id = request.POST.get('id')
+                    video = get_object_or_404(Video, id=video_id)
+                    # Delete the file from storage
+                    if video.video_file:
+                        default_storage.delete(video.video_file.path)
+                    video.delete()
+                    messages.success(request, 'Video deleted successfully')
+                    
+                elif request.POST.get('action') == 'delete_pdf':
+                    pdf_id = request.POST.get('id')
+                    pdf = get_object_or_404(PDF, id=pdf_id)
+                    if pdf.pdf_file:
+                        try:
+                            if os.path.exists(pdf.pdf_file.path):
+                                default_storage.delete(pdf.pdf_file.path)
+                        except Exception as e:
+                            messages.warning(request, f'Error deleting file: {str(e)}')
+                    pdf.delete()
+                    messages.success(request, 'PDF deleted successfully')
                 
         except ValidationError as e:
             messages.error(request, str(e))

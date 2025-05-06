@@ -52,3 +52,18 @@ class EmployeeProgress(models.Model):
 
     def __str__(self):
         return f"{self.employee.username} - {self.course.title}"
+
+class MaterialProgress(models.Model):
+    employee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    video = models.ForeignKey(Video, on_delete=models.CASCADE, null=True, blank=True)
+    pdf = models.ForeignKey(PDF, on_delete=models.CASCADE, null=True, blank=True)
+    completed = models.BooleanField(default=False)
+    completed_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = [['employee', 'video'], ['employee', 'pdf']]
+
+    def __str__(self):
+        material = self.video.title if self.video else self.pdf.title
+        return f"{self.employee.username} - {material}"

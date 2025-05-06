@@ -2,11 +2,11 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from django.db.models import Avg
+from django.db.models import Avg, Count
 from .models import CustomUser
 from courses.models import Course
 from quizzes.models import Quiz
-from questions.models import EmployeeProgress
+from questions.models import EmployeeProgress, MaterialProgress
 
 def is_admin(user):
     return user.is_authenticated and user.role == 'Admin'
@@ -69,13 +69,52 @@ def admin_dashboard(request):
 @login_required
 def employee_dashboard(request):
     user = request.user
-    # Get employee specific courses based on their level
-    courses = Course.objects.filter(level=user.current_level)
+    
+    # Get current level courses with progress
+    current_courses = Course.objects.filter(level=user.current_level)
+    
+    # Calculate progress for each course
+    for course in current_courses:
+        total_materials = course.videos.count() + course.pdfs.count()
+        completed_materials = MaterialProgress.objects.filter(
+            employee=user,
+            course=course,
+            completed=True
+        ).count()
+        
+        course.progress = (completed_materials / total_materials * 100) if total_materials > 0 else 0
+        course.completed = EmployeeProgress.objects.filter(
+            employee=user,
+            course=course,
+            completed=True
+        ).exists()
+        
+        # Check if quiz is available (80% materials completed)
+        course.quiz_available = course.progress >= 80
+
+    # Calculate level progress
+    total_level_courses = current_courses.count()
+    completed_level_courses = EmployeeProgress.objects.filter(
+        employee=user,
+        course__in=current_courses,
+        completed=True
+    ).count()
+    level_progress = (completed_level_courses / total_level_courses * 100) if total_level_courses > 0 else 0
+
+    # Get next level preview if not at max level
+    next_level_courses = []
+    if user.current_level < 3:
+        next_level_courses = Course.objects.filter(level=user.current_level + 1)
+
     context = {
         'user': user,
-        'courses': courses,
-        'completed_courses': courses.filter(employeeprogress__employee=user, employeeprogress__completed=True).count()
+        'courses': current_courses,
+        'available_courses': current_courses.count(),
+        'completed_courses': completed_level_courses,
+        'level_progress': level_progress,
+        'next_level_courses': next_level_courses
     }
+    
     return render(request, 'dashboard/employee_dashboard.html', context)
 
 def signup(request):
