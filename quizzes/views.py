@@ -70,24 +70,18 @@ def quiz_take(request, pk):
     quiz = get_object_or_404(Quiz, pk=pk)
     
     # Verify user can take this quiz
-    if not request.user.is_admin() and quiz.course.level != request.user.current_level:
-        messages.error(request, 'You cannot access quizzes from other levels')
-        return redirect('quiz_list')
-    
-    # Check if user has completed required materials
-    materials_completed = MaterialProgress.objects.filter(
-        employee=request.user,
-        course=quiz.course,
-        completed=True
-    ).count()
-    total_materials = (
-        quiz.course.videos.count() +
-        quiz.course.pdfs.count()
-    )
-    
-    if not request.user.is_admin() and materials_completed < total_materials:
-        messages.warning(request, 'Please complete all course materials before taking the quiz')
-        return redirect('course_detail', pk=quiz.course.id)
+    if not request.user.is_admin():
+        # Only check level access
+        if quiz.course.level != request.user.current_level:
+            messages.error(request, 'You cannot access quizzes from other levels')
+            return redirect('quiz_list')
+            
+        # Check course prerequisites
+        if not quiz.course.is_available_for_user(request.user):
+            messages.error(request, 'Complete the course prerequisites first')
+            return redirect('course_detail', pk=quiz.course.id)
+        
+        # Remove material completion check
     
     questions = Question.objects.filter(quiz=quiz)
     

@@ -98,17 +98,14 @@ def course_detail(request, pk):
             ).exists()
         
         course_progress = calculate_course_progress(request.user, course)
-        quiz_available = is_quiz_available(request.user, course)
     else:
         course_progress = None
-        quiz_available = True
     
     context = {
         'course': course,
         'videos': videos,
         'pdfs': pdfs,
         'progress': course_progress,
-        'quiz_available': quiz_available,
         'is_admin': request.user.is_admin()
     }
     
@@ -266,19 +263,6 @@ def calculate_course_progress(user, course):
     ).count()
     
     return (completed_materials / total_materials) * 100
-
-def is_quiz_available(user, course):
-    if user.is_admin():
-        return True
-        
-    total_materials = Video.objects.filter(course=course).count() + PDF.objects.filter(course=course).count()
-    completed_materials = MaterialProgress.objects.filter(
-        employee=user,
-        course=course,
-        completed=True
-    ).count()
-    
-    return completed_materials == total_materials
 
 def update_course_completion(user, course):
     total_materials = Video.objects.filter(course=course).count() + PDF.objects.filter(course=course).count()

@@ -69,22 +69,18 @@
                             </a>
                         {% else %}
                             {% if quiz.user_progress and quiz.user_progress.completed %}
-                                <a href="{% url 'quiz_result' quiz.pk %}" class="btn btn-outline-success btn-sm flex-grow-1">
-                                    <i class="fas fa-chart-bar me-1"></i>View Results
-                                </a>
-                                <a href="{% url 'quiz_take' quiz.pk %}" class="btn btn-cyber btn-sm">
-                                    <i class="fas fa-redo me-1"></i>Retake
-                                </a>
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'quiz_result' quiz.pk %}" class="btn btn-outline-success flex-grow-1">
+                                        <i class="fas fa-chart-bar me-1"></i>View Results
+                                    </a>
+                                    <a href="{% url 'quiz_take' quiz.pk %}" class="btn btn-cyber">
+                                        <i class="fas fa-redo me-1"></i>Retake
+                                    </a>
+                                </div>
                             {% else %}
-                                {% if quiz.course_progress >= 80 %}
-                                    <a href="{% url 'quiz_take' quiz.pk %}" class="btn btn-cyber btn-sm flex-grow-1">
-                                        <i class="fas fa-play me-1"></i>Start Assessment
-                                    </a>
-                                {% else %}
-                                    <a href="{% url 'course_detail' quiz.course.id %}" class="btn btn-outline-warning btn-sm flex-grow-1">
-                                        <i class="fas fa-book me-1"></i>Complete Course First
-                                    </a>
-                                {% endif %}
+                                <a href="{% url 'quiz_take' quiz.pk %}" class="btn btn-cyber w-100">
+                                    <i class="fas fa-play me-1"></i>Start Assessment
+                            </a>
                             {% endif %}
                         {% endif %}
                     </div>

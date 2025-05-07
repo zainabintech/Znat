@@ -121,17 +121,32 @@
                     Congratulations! You have completed this course with a score of {{ course_progress.quiz_score }}%.
                 </div>
             {% else %}
-                {% if progress_percentage >= 80 %}
-                    <p>You can now take the course assessment quiz.</p>
-                    <a href="{% url 'quiz_take' course.pk %}" class="btn btn-cyber">
-                        <i class="fas fa-tasks me-1"></i>Take Quiz
-                    </a>
-                {% else %}
-                    <div class="alert alert-warning">
-                        <i class="fas fa-info-circle me-2"></i>
-                        Complete at least 80% of course materials to unlock the quiz.
+                <div class="quiz-item {% if quiz.is_completed %}completed{% endif %}">
+                    <div class="quiz-info">
+                        <h4 class="quiz-title">{{ quiz.title }}</h4>
+                        <p class="quiz-meta">
+                            <span><i class="fas fa-clock me-1"></i>{{ quiz.time_limit }} minutes</span>
+                            <span><i class="fas fa-question-circle me-1"></i>{{ quiz.question_count }} questions</span>
+                        </p>
                     </div>
-                {% endif %}
+                    <div class="quiz-actions">
+                        {% if quiz.best_score %}
+                        <div class="quiz-score me-3">
+                            <span class="score-label">Best Score</span>
+                            <span class="score-value {% if quiz.best_score >= quiz.passing_score %}text-success{% else %}text-danger{% endif %}">
+                                {{ quiz.best_score }}%
+                            </span>
+                        </div>
+                        {% endif %}
+                        <a href="{% url 'quiz_take' quiz.id %}" class="btn btn-cyber btn-sm">
+                            {% if quiz.is_completed %}
+                            <i class="fas fa-redo me-1"></i>Retake Quiz
+                            {% else %}
+                            <i class="fas fa-play me-1"></i>Start Quiz
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
             {% endif %}
         </div>
     </div>

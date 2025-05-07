@@ -1,144 +1,96 @@
 # ZNAT - Cybersecurity Awareness Training Platform
 
-ZNAT is a comprehensive cybersecurity awareness training platform built with Django, designed to help organizations train their employees in cybersecurity best practices through interactive courses and assessments.
+![ZNAT Platform Logo](image.png)
 
-## Features
+## About ZNAT
 
-- **User Role Management**
-  - Admin and Employee roles with different access levels
-  - Custom user authentication system
-  - Role-based dashboard views
+ZNAT is a comprehensive cybersecurity awareness training platform built with Django, designed to help organizations train their employees in cybersecurity best practices through interactive courses and assessments. In today's digital landscape, human error remains one of the biggest security vulnerabilities in organizations. ZNAT addresses this challenge by providing an engaging, interactive learning environment where employees can develop crucial cybersecurity skills.
 
-- **Course Management**
-  - Multi-level course structure (Basic, Intermediate, Advanced)
-  - Support for video and PDF learning materials
-  - Course progress tracking
-  - Course material upload with file size validation
+## Demo & Planning
 
-- **Assessment System**
-  - Interactive quizzes with multiple-choice questions
-  - Automatic scoring and feedback
-  - Configurable passing scores
-  - Progress tracking and analytics
+- **Planning Materials**: 
+Trello board for project management and task tracking.
+   - [Trello Board](https://trello.com/b/680d331d/znat-phishing-awareness-platform-lms)
+ 
 
-- **Admin Features**
-  - Course creation and management
-  - Quiz creation and management
-  - User progress monitoring
-  - Analytics dashboard with completion rates
-  - Employee performance tracking
-
-- **Employee Features**
-  - Level-based course access
-  - Interactive learning materials
-  - Progress tracking
-  - Assessment attempts tracking
-  - Performance feedback
 
 ## Technology Stack
 
-- **Backend**: Django 4.2
-- **Database**: PostgreSQL 
-- **Frontend**: 
-  - HTML5, CSS3, JavaScript
-  - Bootstrap 5
-  - Font Awesome icons
-  - Custom cybersecurity-themed UI
+### Backend
+- Python 3.11
+- Django 4.2
 
-## Prerequisites
-
-- Python 3.11 or higher
+### Database
 - PostgreSQL
-- Virtual environment (recommended)
 
-## Installation
+### Frontend
+- HTML5, CSS3, JavaScript
+- Bootstrap 5
+- Font Awesome icons
+- AJAX for dynamic content
+
+### Security
+- Django's built-in security features
+- bcrypt for password hashing
+- django-cleanup for secure file handling
+- django-cors-headers
+
+## Attributions
+
+- Bootstrap 5 - [MIT License](https://github.com/twbs/bootstrap/blob/main/LICENSE)
+- Font Awesome Icons - [Font Awesome Free License](https://fontawesome.com/license/free)
+- Django - [BSD License](https://github.com/django/django/blob/main/LICENSE)
+- Cybersecurity Icons by [Flaticon](https://www.flaticon.com/authors/flat-icons)
+- Icons made by [Freepik](https://www.freepik.com) from [www.flaticon.com](https://www.flaticon.com/)
+- ChatGPT - [OpenAI](https://openai.com/)
+
+
+## Getting Started
 
 1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd znat
-   ```
+```bash
+git clone https://github.com/yourusername/znat.git
+cd znat
+```
 
-2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+2. Create and activate virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Linux/Mac
+```
 
 3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-4. Configure the database in `znat/settings.py`:
-   ```python
-   DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.postgresql',
-           'NAME': 'znat_db',
-           'USER': 'your_username',
-           'PASSWORD': 'your_password',
-           'HOST': 'localhost',
-           'PORT': '5432',
-       }
-   }
-   ```
+4. Set up environment variables:
+```bash
+cp .env.example .env
+# Update .env with your configuration
+```
 
 5. Run migrations:
-   ```bash
-   python manage.py migrate
-   ```
+```bash
+python manage.py migrate
+```
 
-6. Create a superuser:
-   ```bash
-   python manage.py createsuperuser
-   ```
+6. Create superuser:
+```bash
+python manage.py createsuperuser
+```
 
 7. Run the development server:
-   ```bash
-   python manage.py runserver
-   ```
+```bash
+python manage.py runserver
+```
 
-## Project Structure
 
-- `courses/`: Course management app
-- `questions/`: Question and assessment management
-- `quizzes/`: Quiz functionality and scoring
-- `users/`: Custom user management
-- `static/`: Static files (CSS, JavaScript)
-- `templates/`: HTML templates
-- `media/`: Uploaded files (videos, PDFs)
+## Future Enhancements
 
-## File Upload Limits
+  - Phishing email simulation campaigns
+  - Social engineering attack scenarios
+  - Achievement badges
+  - Employee leaderboards
+  - Monthly security champions
 
-- Video files: Maximum 100MB
-- PDF files: Maximum 10MB
-
-## Security Features
-
-- Password strength validation
-- Role-based access control
-- File type validation
-- Secure file upload handling
-- CSRF protection
-- Session security
-
-## Development Guidelines
-
-1. Follow Django's coding style
-2. Write tests for new features
-3. Document code changes
-4. Validate file uploads
-5. Implement proper error handling
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a new Pull Request
