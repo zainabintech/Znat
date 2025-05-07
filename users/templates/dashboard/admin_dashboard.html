@@ -9,9 +9,18 @@
             <a href="{% url 'course_create' %}" class="btn btn-cyber">
                 <i class="fas fa-plus me-1"></i>New Course
             </a>
-            <a href="{% url 'quiz_create' %}" class="btn btn-cyber">
-                <i class="fas fa-plus me-1"></i>New Quiz
-            </a>
+            <div class="dropdown">
+                <button class="btn btn-cyber dropdown-toggle" type="button" id="newQuizDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-plus me-1"></i>New Quiz
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="newQuizDropdown">
+                    {% for course in courses %}
+                        <li><a class="dropdown-item" href="{% url 'quiz_create' course.pk %}">{{ course.title }}</a></li>
+                    {% empty %}
+                        <li><span class="dropdown-item disabled">No courses available</span></li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 
