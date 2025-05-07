@@ -6,6 +6,12 @@ class CustomUser(AbstractUser):
         ('Admin', 'Admin'),
         ('Employee', 'Employee')
     ]
+    
+    # Override AbstractUser fields
+    first_name = None
+    last_name = None
+    
+    # Custom fields
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     current_level = models.IntegerField(default=1)
     latest_score = models.FloatField(null=True, blank=True)
@@ -21,13 +27,14 @@ class CustomUser(AbstractUser):
         return self.username
 
     def is_admin(self):
-        return self.role == 'Admin'
+        return self.is_superuser or self.role == 'Admin'
 
     def is_employee(self):
-        return self.role == 'Employee'
+        return not self.is_superuser and self.role == 'Employee'
 
     def save(self, *args, **kwargs):
-        # Ensure admin users start at max level
-        if self.role == 'Admin' and self.current_level < 3:
+        # Ensure superusers and admin users start at max level
+        if self.is_superuser or self.role == 'Admin':
             self.current_level = 3
+            self.role = 'Admin'  # Ensure superusers are always admins
         super().save(*args, **kwargs)

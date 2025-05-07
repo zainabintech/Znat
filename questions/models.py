@@ -16,7 +16,7 @@ class Question(models.Model):
 class Video(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='videos')
     title = models.CharField(max_length=255)
-    video_file = models.FileField(upload_to='videos/')
+    youtube_url = models.URLField(max_length=255, help_text='Enter the YouTube video URL', null=True, blank=True)
 
     def __str__(self):
         return self.title

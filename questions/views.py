@@ -44,27 +44,22 @@ def upload_course_material(request):
                 course = Course.objects.get(pk=course_id)
                 
                 if material_type == 'video':
-                    if 'video_file' not in request.FILES:
-                        raise ValidationError('No video file uploaded')
-                        
-                    video_file = request.FILES['video_file']
-                    validate_file_type(video_file, 'video/')
+                    youtube_url = request.POST.get('youtube_url')
+                    if not youtube_url:
+                        raise ValidationError('Please provide a YouTube URL')
                     
-                    # Check file size (100MB limit)
-                    if video_file.size > 104857600:
-                        raise ValidationError('Video file too large (max 100MB)')
-                    
+                    # Create video
                     video = Video.objects.create(
                         title=title,
                         course=course,
-                        video_file=video_file
+                        youtube_url=youtube_url
                     )
-                    messages.success(request, 'Video uploaded successfully')
+                    messages.success(request, 'Video added successfully')
                     
                 elif material_type == 'pdf':
                     if 'pdf_file' not in request.FILES:
                         raise ValidationError('No PDF file uploaded')
-                        
+                    
                     pdf_file = request.FILES['pdf_file']
                     validate_file_type(pdf_file, 'application/pdf')
                     
@@ -82,9 +77,6 @@ def upload_course_material(request):
                 elif request.POST.get('action') == 'delete_video':
                     video_id = request.POST.get('id')
                     video = get_object_or_404(Video, id=video_id)
-                    # Delete the file from storage
-                    if video.video_file:
-                        default_storage.delete(video.video_file.path)
                     video.delete()
                     messages.success(request, 'Video deleted successfully')
                     
@@ -107,10 +99,24 @@ def upload_course_material(request):
         except Exception as e:
             messages.error(request, f'Error processing upload: {str(e)}')
     
+    # Get current course if in wizard flow
+    course = None
+    if 'course_id' in request.GET:
+        course = get_object_or_404(Course, pk=request.GET.get('course_id'))
+    
+    # Show all courses and materials
+    if course:
+        videos = Video.objects.filter(course=course).select_related('course')
+        pdfs = PDF.objects.filter(course=course).select_related('course')
+    else:
+        videos = Video.objects.all().select_related('course')
+        pdfs = PDF.objects.all().select_related('course')
+    
     context = {
+        'course': course,
         'courses': Course.objects.all().order_by('level', 'title'),
-        'videos': Video.objects.all().select_related('course'),
-        'pdfs': PDF.objects.all().select_related('course'),
+        'videos': videos,
+        'pdfs': pdfs,
     }
     return render(request, 'upload_course_material.html', context)
 

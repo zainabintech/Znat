@@ -5,14 +5,13 @@ from django.core.exceptions import ValidationError
 class VideoForm(forms.ModelForm):
     class Meta:
         model = Video
-        fields = ['title', 'course', 'video_file']
+        fields = ['title', 'course', 'youtube_url']
 
-    def clean_video_file(self):
-        video = self.cleaned_data.get('video_file')
-        if video:
-            if video.size > 104857600:  # 100MB
-                raise ValidationError('Video file too large (max 100MB)')
-        return video
+    def clean_youtube_url(self):
+        url = self.cleaned_data.get('youtube_url')
+        if url and ('youtube.com' not in url and 'youtu.be' not in url):
+            raise ValidationError('Please enter a valid YouTube URL')
+        return url
 
 class PDFForm(forms.ModelForm):
     class Meta:

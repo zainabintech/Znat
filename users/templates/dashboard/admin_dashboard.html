@@ -79,20 +79,22 @@
             <div class="feature-card h-100">
                 <h3 class="h4 mb-3">Employee Progress</h3>
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table" aria-label="Employee Progress Table">
                         <thead>
                             <tr>
-                                <th>Employee</th>
-                                <th>Current Level</th>
-                                <th>Latest Score</th>
-                                <th>Progress</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Current Level</th>
+                                <th scope="col">Latest Score</th>
+                                <th scope="col">Progress</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for employee in employees %}
                             <tr>
                                 <td>{{ employee.username }}</td>
-                                <td>Level {{ employee.current_level }}</td>
+                                <td>
+                                    <span class="badge bg-primary">Level {{ employee.current_level }}</span>
+                                </td>
                                 <td>
                                     {% if employee.latest_score %}
                                         {{ employee.latest_score }}%

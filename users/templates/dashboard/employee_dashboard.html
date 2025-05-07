@@ -1,155 +1,160 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container py-4">
-    <!-- Dashboard Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="fas fa-user-graduate me-2"></i>Employee Dashboard</h2>
-        <div class="text-end">
-            <h4 class="mb-0">Level {{ user.current_level }}</h4>
-            {% if user.latest_score %}
-                <p class="text-muted mb-0">Latest Quiz Score: {{ user.latest_score|floatformat:1 }}%</p>
-            {% endif %}
-        </div>
-    </div>
-
-    <!-- Progress Overview -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="feature-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h3 class="h5 mb-0">{{ available_courses }}</h3>
-                        <p class="text-muted mb-0">Available Courses</p>
-                    </div>
-                    <i class="fas fa-book fa-2x text-primary"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="feature-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h3 class="h5 mb-0">{{ completed_courses }}</h3>
-                        <p class="text-muted mb-0">Completed Courses</p>
-                    </div>
-                    <i class="fas fa-check-circle fa-2x text-success"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="feature-card">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h3 class="h5 mb-0">{{ user.current_level }}/3</h3>
-                        <p class="text-muted mb-0">Security Level</p>
-                    </div>
-                    <i class="fas fa-shield-alt fa-2x text-warning"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Level Progress -->
+    <!-- Level Progress Overview -->
     <div class="feature-card mb-4">
-        <h3 class="h4 mb-3">Level {{ user.current_level }} Progress</h3>
-        <div class="progress mb-3" style="height: 10px;">
-            <div class="progress-bar bg-success" role="progressbar" 
-                 style="width: {{ level_progress }}%" 
-                 aria-valuenow="{{ level_progress }}" 
-                 aria-valuemin="0" 
-                 aria-valuemax="100"></div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="mb-1">Welcome, {{ user.username }}</h2>
+                <p class="text-muted mb-0">Track your cybersecurity learning journey</p>
+            </div>
+            <div class="text-end">
+                <h4 class="mb-0">Level {{ user.current_level }}</h4>
+                {% if user.latest_score %}
+                    <p class="text-muted mb-0">Latest Quiz Score: {{ user.latest_score|floatformat:1 }}%</p>
+                {% endif %}
+            </div>
         </div>
-        <div class="text-end">
-            <small class="text-muted">{{ level_progress|floatformat:1 }}% Complete</small>
-        </div>
-    </div>
 
-    <!-- Current Courses -->
-    <div class="feature-card mb-4">
-        <h3 class="h4 mb-3">Your Current Courses</h3>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Course</th>
-                        <th>Progress</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for course in courses %}
-                    <tr>
-                        <td>{{ course.title }}</td>
-                        <td style="width: 30%;">
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-success" role="progressbar" 
-                                     style="width: {{ course.progress|default:0 }}%" 
-                                     aria-valuenow="{{ course.progress|default:0 }}" 
-                                     aria-valuemin="0" 
-                                     aria-valuemax="100"></div>
-                            </div>
-                            <small class="text-muted">{{ course.progress|default:0|floatformat:1 }}%</small>
-                        </td>
-                        <td>
-                            {% if course.completed %}
-                                <span class="badge bg-success">Completed</span>
-                            {% else %}
-                                <span class="badge bg-warning">In Progress</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{% url 'course_detail' course.pk %}" class="btn btn-cyber btn-sm">
-                                <i class="fas fa-book-open me-1"></i>Continue
-                            </a>
-                            {% if course.quiz_available and not course.completed %}
-                                <a href="{% url 'quiz_take' course.pk %}" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-tasks me-1"></i>Take Quiz
+        <!-- Progress Overview -->
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="h5 mb-0">{{ available_courses }}</h3>
+                            <p class="text-muted mb-0">Available Courses</p>
+                        </div>
+                        <i class="fas fa-book fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="h5 mb-0">{{ completed_courses }}</h3>
+                            <p class="text-muted mb-0">Completed Courses</p>
+                        </div>
+                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="h5 mb-0">{{ user.current_level }}/3</h3>
+                            <p class="text-muted mb-0">Security Level</p>
+                        </div>
+                        <i class="fas fa-shield-alt fa-2x text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Level Progress -->
+        <div class="feature-card mb-4">
+            <h3 class="h4 mb-3">Level {{ user.current_level }} Progress</h3>
+            <div class="progress mb-3" style="height: 10px;">
+                <div class="progress-bar bg-success" role="progressbar" 
+                     style="width: {{ level_progress }}%" 
+                     aria-valuenow="{{ level_progress }}" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100"></div>
+            </div>
+            <div class="text-end">
+                <small class="text-muted">{{ level_progress|floatformat:1 }}% Complete</small>
+            </div>
+        </div>
+
+        <!-- Current Courses -->
+        <div class="feature-card mb-4">
+            <h3 class="h4 mb-3">Your Current Courses</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                        <tr>
+                            <td>{{ course.title }}</td>
+                            <td style="width: 30%;">
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-success" role="progressbar" 
+                                         style="width: {{ course.progress|default:0 }}%" 
+                                         aria-valuenow="{{ course.progress|default:0 }}" 
+                                         aria-valuemin="0" 
+                                         aria-valuemax="100"></div>
+                                </div>
+                                <small class="text-muted">{{ course.progress|default:0|floatformat:1 }}%</small>
+                            </td>
+                            <td>
+                                {% if course.completed %}
+                                    <span class="badge bg-success">Completed</span>
+                                {% else %}
+                                    <span class="badge bg-warning">In Progress</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'course_detail' course.pk %}" class="btn btn-cyber btn-sm">
+                                    <i class="fas fa-book-open me-1"></i>Continue
                                 </a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="text-center">No courses available for your current level.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                                {% if course.quiz_available and not course.completed %}
+                                    <a href="{% url 'quiz_take' course.pk %}" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-tasks me-1"></i>Take Quiz
+                                    </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No courses available for your current level.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
 
-    <!-- Next Level Preview -->
-    {% if user.current_level < 3 %}
-    <div class="feature-card">
-        <h3 class="h4 mb-3">Next Level Preview</h3>
-        <p>Complete your current level courses to unlock Level {{ user.current_level|add:1 }} content:</p>
-        <ul class="list-unstyled">
-            {% for course in next_level_courses %}
-            <li class="mb-2">
-                <i class="fas fa-lock me-2 text-muted"></i>
-                {{ course.title }}
-            </li>
-            {% empty %}
-            <li class="text-muted">No preview available for next level.</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
+        <!-- Next Level Preview -->
+        {% if user.current_level < 3 %}
+        <div class="feature-card">
+            <h3 class="h4 mb-3">Next Level Preview</h3>
+            <p>Complete your current level courses to unlock Level {{ user.current_level|add:1 }} content:</p>
+            <ul class="list-unstyled">
+                {% for course in next_level_courses %}
+                <li class="mb-2">
+                    <i class="fas fa-lock me-2 text-muted"></i>
+                    {{ course.title }}
+                </li>
+                {% empty %}
+                <li class="text-muted">No preview available for next level.</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
 
-    <!-- Quick Actions -->
-    <div class="feature-card mt-4">
-        <h3 class="h4 mb-3">Quick Actions</h3>
-        <div class="d-flex gap-2 flex-wrap">
-            <a href="{% url 'course_list' %}" class="btn btn-cyber">
-                <i class="fas fa-book me-1"></i>Browse All Courses
-            </a>
-            <a href="{% url 'quiz_list' %}" class="btn btn-cyber">
-                <i class="fas fa-tasks me-1"></i>Available Assessments
-            </a>
-            <button class="btn btn-cyber" data-bs-toggle="modal" data-bs-target="#progressModal">
-                <i class="fas fa-chart-line me-1"></i>View Progress Report
-            </button>
+        <!-- Quick Actions -->
+        <div class="feature-card mt-4">
+            <h3 class="h4 mb-3">Quick Actions</h3>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'course_list' %}" class="btn btn-cyber">
+                    <i class="fas fa-book me-1"></i>Browse All Courses
+                </a>
+                <a href="{% url 'quiz_list' %}" class="btn btn-cyber">
+                    <i class="fas fa-tasks me-1"></i>Available Assessments
+                </a>
+                <button class="btn btn-cyber" data-bs-toggle="modal" data-bs-target="#progressModal">
+                    <i class="fas fa-chart-line me-1"></i>View Progress Report
+                </button>
+            </div>
         </div>
     </div>
 </div>

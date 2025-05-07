@@ -9,7 +9,7 @@ from quizzes.models import Quiz
 from questions.models import EmployeeProgress, MaterialProgress
 
 def is_admin(user):
-    return user.is_authenticated and user.role == 'Admin'
+    return user.is_authenticated and (user.is_superuser or user.role == 'Admin')
 
 @login_required
 def admin_dashboard(request):
@@ -34,36 +34,19 @@ def admin_dashboard(request):
         level_completions = EmployeeProgress.objects.filter(course__level=level, completed=True).count()
         total_possible = employees.count() * level_courses.count()
         level_rate = (level_completions / total_possible * 100) if total_possible > 0 else 0
-        completion_by_level.append(level_rate)
-    
-    # Calculate average quiz scores over time
-    quiz_scores = []
-    quiz_labels = []
-    recent_quizzes = quizzes.order_by('-id')[:10]  # Last 10 quizzes
-    for quiz in recent_quizzes:
-        avg_score = EmployeeProgress.objects.filter(course=quiz.course).aggregate(Avg('quiz_score'))['quiz_score__avg']
-        if avg_score:
-            quiz_scores.append(float(avg_score))
-            quiz_labels.append(quiz.course.title[:10] + '...')  # Truncate long titles
-    
-    # Calculate completion percentage for each employee
-    for employee in employees:
-        completed = EmployeeProgress.objects.filter(employee=employee, completed=True).count()
-        total = courses.filter(level__lte=employee.current_level).count()
-        employee.completion_percentage = (completed / total * 100) if total > 0 else 0
+        completion_by_level.append({
+            'level': level,
+            'rate': level_rate
+        })
     
     context = {
         'employees': employees,
         'courses': courses,
         'quizzes': quizzes,
-        'total_employees': employees.count(),
-        'total_courses': courses.count(),
-        'total_quizzes': quizzes.count(),
-        'completion_rate': completion_rate,
+        'completion_rate': round(completion_rate, 1),
         'completion_by_level': completion_by_level,
-        'quiz_scores': quiz_scores,
-        'quiz_labels': quiz_labels,
     }
+    
     return render(request, 'dashboard/admin_dashboard.html', context)
 
 @login_required

@@ -4,7 +4,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2><i class="fas fa-graduation-cap me-2"></i>Available Courses</h2>
         {% if user.role == 'Admin' %}
-            <a href="{% url 'course_create' %}" class="btn btn-cyber">
+            <a href="{% url 'course_wizard' step=1 %}" class="btn btn-cyber">
                 <i class="fas fa-plus me-1"></i>Add Course
             </a>
         {% endif %}

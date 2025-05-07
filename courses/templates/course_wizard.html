@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <div class="feature-card">
+        <!-- Progress Bar -->
+        <div class="wizard-progress mb-4">
+            <div class="progress" style="height: 3px;">
+                <div class="progress-bar" role="progressbar" style="width: {{ progress }}%"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+                <span class="step {% if step >= 1 %}active{% endif %}">Course Details</span>
+                <span class="step {% if step >= 2 %}active{% endif %}">Course Materials</span>
+                <span class="step {% if step >= 3 %}active{% endif %}">Quiz Setup</span>
+                <span class="step {% if step >= 4 %}active{% endif %}">Questions</span>
+            </div>
+        </div>
+
+        <!-- Step Content -->
+        {% if step == 1 %}
+            {% include 'course_form.html' %}
+        {% elif step == 2 %}
+            <div class="iframe-container" style="height: 800px;">
+                <iframe src="{{ upload_url }}" style="width: 100%; height: 100%; border: none;"></iframe>
+            </div>
+        {% elif step == 3 %}
+            {% include 'quiz_form.html' %}
+        {% elif step == 4 %}
+            {% include 'question_form.html' %}
+        {% endif %}
+
+        <!-- Navigation Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+            {% if step > 1 %}
+                <a href="{% url 'course_wizard' step|add:'-1' course.id %}" class="btn btn-outline-cyber">
+                    <i class="fas fa-arrow-left me-1"></i>Back
+                </a>
+            {% else %}
+                <div></div>
+            {% endif %}
+
+            {% if step < 4 %}
+                {% if step == 2 %}
+                    <a href="{% url 'course_wizard' 3 course.id %}" class="btn btn-cyber">
+                        Next<i class="fas fa-arrow-right ms-1"></i>
+                    </a>
+                {% else %}
+                    <button type="submit" form="wizardForm" class="btn btn-cyber">
+                        Next<i class="fas fa-arrow-right ms-1"></i>
+                    </button>
+                {% endif %}
+            {% else %}
+                <button type="submit" form="wizardForm" class="btn btn-success">
+                    <i class="fas fa-check me-1"></i>Complete
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.wizard-progress .step {
+    position: relative;
+    color: #6c757d;
+}
+
+.wizard-progress .step.active {
+    color: var(--primary-purple);
+}
+
+.wizard-progress .step::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 2px solid #6c757d;
+    border-radius: 50%;
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}
+
+.wizard-progress .step.active::before {
+    border-color: var(--primary-purple);
+    background: var(--primary-purple);
+}
+
+.iframe-container {
+    background: rgba(10, 11, 30, 0.8);
+    border: 1px solid var(--primary-purple);
+    border-radius: 15px;
+    overflow: hidden;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('wizardForm');
+    const nextBtn = document.querySelector('.btn-cyber');
+    const addAnotherBtn = document.querySelector('.btn-add-another');
+
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        });
+    }
+
+    if (addAnotherBtn) {
+        addAnotherBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'add_another';
+            input.value = 'true';
+            form.appendChild(input);
+            form.submit();
+        });
+    }
+});
+</script>
+{% endblock %}

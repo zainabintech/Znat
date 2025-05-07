@@ -3,10 +3,12 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Count, Q
 from django.db import transaction
+from django.utils import timezone
 from .models import Course
 from users.models import CustomUser
 from django import forms
-from questions.models import Video, PDF, MaterialProgress, EmployeeProgress, Quiz
+from questions.models import Video, PDF, MaterialProgress, EmployeeProgress, Question
+from quizzes.models import Quiz
 
 def is_employee(user):
     return user.is_authenticated and user.role == 'Employee'
@@ -133,6 +135,8 @@ def course_create(request):
                 with transaction.atomic():
                     course = form.save(commit=False)
                     course.user = request.user
+                    course.created_at = timezone.now()
+                    course.updated_at = timezone.now()
                     course.save()
                     messages.success(request, 'Course created successfully')
                     return redirect('course_list')
@@ -151,7 +155,9 @@ def course_update(request, pk):
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    form.save()
+                    course = form.save(commit=False)
+                    course.updated_at = timezone.now()
+                    course.save()
                     messages.success(request, 'Course updated successfully')
                     return redirect('course_list')
             except Exception as e:
@@ -172,6 +178,78 @@ def course_delete(request, pk):
             messages.error(request, f'Error deleting course: {str(e)}')
         return redirect('course_list')
     return render(request, 'course_confirm_delete.html', {'course': course})
+
+@login_required
+@user_passes_test(is_admin)
+def course_wizard(request, step, course_id=None):
+    # Calculate progress percentage
+    progress = (step / 4) * 100
+    
+    if step == 1:
+        if request.method == 'POST':
+            form = CourseForm(request.POST)
+            if form.is_valid():
+                course = form.save(commit=False)
+                course.user = request.user
+                course.created_at = timezone.now()
+                course.updated_at = timezone.now()
+                course.save()
+                return redirect('course_wizard', step=2, course_id=course.id)
+        else:
+            form = CourseForm()
+        return render(request, 'course_wizard.html', {
+            'step': step,
+            'progress': progress,
+            'form': form
+        })
+    
+    # For steps 2-4, we need an existing course
+    course = get_object_or_404(Course, pk=course_id)
+    
+    if step == 2:
+        # Pass the course_id in the context so the template can add it to the form
+        return render(request, 'course_wizard.html', {
+            'step': step,
+            'progress': progress,
+            'course': course,
+            'upload_url': f'/questions/upload-materials/?course_id={course_id}'
+        })
+    
+    elif step == 3:
+        if request.method == 'POST':
+            # Create quiz
+            quiz = Quiz.objects.create(
+                course=course,
+                passing_score=float(request.POST.get('passing_score', 70)),
+                user=request.user
+            )
+            return redirect('course_wizard', step=4, course_id=course.id)
+        return render(request, 'course_wizard.html', {
+            'step': step,
+            'progress': progress,
+            'course': course
+        })
+    
+    elif step == 4:
+        if request.method == 'POST':
+            # Create question
+            question = Question.objects.create(
+                quiz=course.quiz_set.first(),
+                text=request.POST['text'],
+                type=request.POST['type'],
+                correct_option_id=request.POST['correct_option_id']
+            )
+            if 'add_another' in request.POST:
+                return redirect('course_wizard', step=4, course_id=course.id)
+            return redirect('course_detail', pk=course.id)
+        return render(request, 'course_wizard.html', {
+            'step': step,
+            'progress': progress,
+            'course': course,
+            'quiz': course.quiz_set.first()
+        })
+
+    return redirect('course_list')
 
 def calculate_course_progress(user, course):
     if not user.is_employee():
